@@ -11,10 +11,12 @@ class Addusers extends Migration
         // User schema creation code here
         $this->forge->addField([
             'id' => ['type' => 'INT', 'constraint' => 5, 'unsigned' => true, 'auto_increment' => true],
-            'name' => ['type' => 'VARCHAR', 'constraint' => 200],
-            'email' => ['type' => 'VARCHAR', 'constraint' => 200],
-            'password' => ['type' => 'VARCHAR', 'constraint' => 200],
-            'created_at' => ['type' => 'datetime'],
+            'name' => ['type' => 'VARCHAR', 'constraint' => 255],
+            'email' => ['type' => 'VARCHAR', 'constraint' => 255],
+            'password' => ['type' => 'VARCHAR', 'constraint' => 255],
+            'created_at datetime default current_timestamp',
+            'updated_at datetime default current_timestamp on update current_timestamp',
+            'status' => ['type' => 'ENUM("active","inactive")','default' => 'active','null' => FALSE],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('users');

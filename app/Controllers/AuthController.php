@@ -65,11 +65,14 @@ class AuthController extends BaseController
         if ($this->request->getMethod() == 'post') {
             $user = $this->userModel->verifyUser($email, $password);
             if (!empty($user->resultID->num_rows > 0) || $user->resultID->num_rows > 0) {
-                $data = $user->getResult();
+                $data = $user->getResult();                
                 if (!password_verify($password, $data[0]->password)) {
                     $this->session->set('danger', 'Incorrect password');
                     return redirect()->to('/login');
-                } else {
+                } else if(!empty($data[0]) && $data[0]->status!='active'){
+                    $this->session->set('danger', 'Email is not active , Please contact admin !');
+                    return redirect()->to('/login');
+                }else{
                     $sessiondata = [
                         'name' => $data[0]->name,
                         'email' => $email,
@@ -79,7 +82,7 @@ class AuthController extends BaseController
                     return redirect()->to('/dashboard');
                 }
             } else {
-                $this->session->set('danger', 'Incorrect email Id/password');
+                $this->session->set('danger', 'Email Id doesnot exist!');
                 return redirect()->to('/login');
             }
         }
@@ -88,15 +91,22 @@ class AuthController extends BaseController
     public function doRegister()
     {
         if (strtolower($this->request->getMethod()) == 'post') {
-            $data = ['name' => $this->request->getVar('uname'), 'email' => $this->request->getVar('email'), 'password' => $this->request->getVar('password')];
-            $resultData= $this->userModel->createUser($data);
-            if(!empty($resultData)){
-                 $this->session->set('success', 'Account registered successfully');
-                 return redirect()->to('/login');               
+            $email = $this->request->getVar('email');
+            $user = $this->userModel->verifyUser($email, '');
+            if (!empty($user->resultID->num_rows > 0) || $user->resultID->num_rows > 0) {
+                $this->session->set('danger', 'Email Id already registered !');
+                 return redirect()->to('/register');
             }else{
-                 $this->session->set('danger', 'Failed to register');
-                return redirect()->to('/register');
-            }           
+                $data = ['name' => $this->request->getVar('uname'), 'email' => $this->request->getVar('email'), 'password' => $this->request->getVar('password')];
+                $resultData= $this->userModel->createUser($data);
+                if(!empty($resultData)){
+                    $this->session->set('success', 'Account registered successfully');
+                    return redirect()->to('/login');               
+                }else{
+                    $this->session->set('danger', 'Failed to register');
+                    return redirect()->to('/register');
+                }
+            }                       
         } else {
             $this->session->set('danger', 'Failed to register');
             return redirect()->to('/register');
