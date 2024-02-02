@@ -27,7 +27,7 @@ class User extends Model
     protected $validationRules      = [
         'uname' => 'required',
         'password' => 'required|min_length[10]',
-        'email'    => 'required|valid_email|is_unique[users.email]',
+        'email'    => 'required|valid_email|is_unique[Users.email]',
     ];
     protected $validationMessages   = [
         'uname' => 'username required',
@@ -52,12 +52,13 @@ class User extends Model
     protected $afterDelete    = [];
 
     public function createUser($param = array())
-    {
-        $password = password_hash($param['password'], PASSWORD_BCRYPT);
-        $insert = array('name' => $param['name'], 'email' => $param['email'], 'password' => $password);       
-        $query = $this->db->table($this->table);
-        $res = $query->insert($insert);    
-        return $res;
+    {        
+            $password = password_hash($param['password'], PASSWORD_BCRYPT);
+            $insert = array('name' => $param['name'], 'email' => $param['email'], 'password' => $password);       
+            $query = $this->db->table($this->table);
+            $res = $query->insert($insert);    
+            return $res;  
+        
     }
 
     public function verifyUser($email, $password)
