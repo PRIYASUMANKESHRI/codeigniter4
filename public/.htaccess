@@ -44,6 +44,13 @@ Options -Indexes
 	ErrorDocument 404 index.php
 </IfModule>
 
+# Allow direct access to the 'images', 'videos', and 'gifs' folders
+RewriteRule ^images/ - [L]
+RewriteRule ^videos/ - [L]
+RewriteRule ^gifs/ - [L]
+RewriteRule ^css/ - [L]
+RewriteRule ^js/ - [L]
+
 # Disable server signature start
 	ServerSignature Off
 # Disable server signature end
